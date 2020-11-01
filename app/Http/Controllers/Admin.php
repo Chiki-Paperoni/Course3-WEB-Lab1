@@ -18,7 +18,7 @@ class Admin extends Controller
 
         $pattern = "/<(([a-z]+)\s*([^>]*))>/";
         if (preg_match($pattern, $request->content)) {
-            pages::edit_page($request->id,$request->caption,$request->content);
+            pages::edit_page($request->id,$request->caption,$request->content,$request->parentCode,$request->prderNum);
             return redirect('/admin');
         }
         return "content syntaxis error";
@@ -32,17 +32,22 @@ class Admin extends Controller
     public static function createPage(Request $request) {
         $pattern = "/<(([a-z]+)\s*([^>]*))>/";
         if (preg_match($pattern, $request->content)) {
-            pages::create_page($request->caption,$request->content,$request->url);
+            pages::create_page($request->caption,$request->content,$request->url,$request->parentCode,$request->prderNum);
             return redirect('/admin');
         }
         return "content syntaxis error";
 
         
     }
-
     public static function edit($id) {
         $page =  pages::get_pageId($id);
         return view('edit',['page'=>$page[0]]);
+    }
+
+    public static function children($lang,$page) {
+        $pagesList = pages::getChildren($lang."/".$page);
+        return view('admin',['pagesList'=>$pagesList]);
+
     }
 
 }
